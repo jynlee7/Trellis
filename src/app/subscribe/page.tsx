@@ -8,8 +8,18 @@ export default function SubscribePage() {
   const [sessionPhone, setSessionPhone] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
-  const [view, setView] = useState<'subscribe' | 'confirm'>('subscribe');
+  const [view, setView] = useState<'consent' | 'subscribe' | 'confirm'>('consent');
   const [code, setCode] = useState('');
+  const [consentChecked, setConsentChecked] = useState(false);
+
+  const handleConsentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!consentChecked) {
+      setError('Please agree to the terms to continue');
+      return;
+    }
+    setView('subscribe');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +92,75 @@ export default function SubscribePage() {
           </p>
           <Link href="/" className="text-blue-600 hover:underline">
             Return to home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'consent') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Consent to Receive Notifications</h1>
+          <p className="text-gray-600 mb-6">
+            Before you subscribe, please review our terms and consent to receive SMS notifications.
+          </p>
+
+          <div className="bg-gray-50 p-4 rounded-lg mb-4 max-h-60 overflow-y-auto text-sm">
+            <h3 className="font-semibold mb-2">Terms of Service & Consent</h3>
+            <p className="mb-3">
+              By checking the box below, you agree to receive automated SMS notifications from Trellis containing daily tech news briefings.
+            </p>
+            <h4 className="font-medium mb-1">Consent Agreement:</h4>
+            <ul className="list-disc list-inside mb-3 space-y-1 text-gray-600">
+              <li>I consent to receive SMS messages at my phone number</li>
+              <li>Message frequency: Up to 1 message per day</li>
+              <li>Standard message rates may apply</li>
+              <li>I can reply STOP to unsubscribe at any time</li>
+              <li>I am 13+ years of age or have parental consent</li>
+            </ul>
+            <h4 className="font-medium mb-1">Privacy:</h4>
+            <p className="text-gray-600 mb-3">
+              We will never share your phone number with third parties. Your data is stored securely and used only to deliver the news briefing you requested.
+            </p>
+            <h4 className="font-medium mb-1">Contact:</h4>
+            <p className="text-gray-600">
+              For questions, contact: support@trellis.app
+            </p>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleConsentSubmit}>
+            <label className="flex items-start gap-3 mb-6 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={consentChecked}
+                onChange={(e) => setConsentChecked(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-300"
+                required
+              />
+              <span className="text-sm text-gray-600">
+                I have read and agree to the terms above, and consent to receive SMS notifications from Trellis.
+              </span>
+            </label>
+
+            <button
+              type="submit"
+              disabled={!consentChecked}
+              className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            >
+              I Agree - Continue
+            </button>
+          </form>
+
+          <Link href="/" className="block text-center mt-4 text-gray-500 text-sm hover:text-gray-700">
+            Cancel - Return Home
           </Link>
         </div>
       </div>
